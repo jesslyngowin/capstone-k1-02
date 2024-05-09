@@ -174,6 +174,18 @@
 
 })()
 
+//alert
+function showAlert() {
+  var alertDiv = document.getElementById("alertMessage");
+  alertDiv.style.display = "block";
+  alertDiv.classList.add("fade-in");
+
+  // Hide the alert after 5 seconds
+  setTimeout(function() {
+    alertDiv.style.display = "none";
+    alertDiv.classList.remove("fade-in");
+  }, 5000);
+}
 
 // form script
 var currentTab = 0; // Current tab is set to be the first tab (0)
@@ -206,30 +218,15 @@ function showTab(n) {
   fixStepIndicator(n)
 }
 
-// function nextPrev(n) {
-//   // This function will figure out which tab to display
-//   var x = document.getElementsByClassName("step");
-//   // Exit the function if any field in the current tab is invalid:
-//   if (n == 1 && !validateForm()) return false;
-//   // Hide the current tab:
-//   x[currentTab].style.display = "none";
-//   // Increase or decrease the current tab by 1:
-//   currentTab = currentTab + n;
-//   // if you have reached the end of the form...
-//   if (currentTab >= x.length) {
-//     // ... the form gets submitted:
-//     document.getElementById("signUpForm").submit();
-//     return false;
-//   }
-//   // Otherwise, display the correct tab:
-//   showTab(currentTab);
-// }
-
 function nextPrev(n) {
   // This function will figure out which tab to display
   var x = document.getElementsByClassName("step");
+  
   // Exit the function if any field in the current tab is invalid:
-  if (n == 1 && !validateForm()) return false;
+  if (n == 1 && !validateForm()) {
+    showAlert();
+    return false;
+  }
   // Hide the current tab:
   x[currentTab].style.display = "none";
   // Increase or decrease the current tab by 1:
@@ -255,23 +252,24 @@ function validateForm() {
   // This function deals with validation of the form fields
   var x, y, i, valid = true;
   x = document.getElementsByClassName("step");
-  y = x[currentTab].getElementsByTagName("input");
+  y = x[currentTab].querySelectorAll('input[type="text"], input[type="radio"]');
   // A loop that checks every input field in the current tab:
   for (i = 0; i < y.length; i++) {
-    // If a field is empty...
-    if (y[i].value == "") {
+    // If a field is empty or no radio button is checked...
+    if ((y[i].type === 'text' && y[i].value === "") || (y[i].type === 'radio' && !y[i].checked)) {
       // add an "invalid" class to the field:
-      y[i].className += " invalid";
+      y[i].classList.add("invalid");
       // and set the current valid status to false
       valid = false;
     }
   }
   // If the valid status is true, mark the step as finished and valid:
   if (valid) {
-    document.getElementsByClassName("stepIndicator")[currentTab].className += " finish";
+    document.getElementsByClassName("stepIndicator")[currentTab].classList.add("finish");
   }
   return valid; // return the valid status
 }
+
 
 function fixStepIndicator(n) {
   // This function removes the "active" class of all steps...
@@ -295,40 +293,3 @@ nextButton.addEventListener("click", function() {
     console.log("Next button clicked!");
 });
 
-
-
-// radio button scroll
-// document.addEventListener('DOMContentLoaded', function () {
-//   const select = (el, all = false) => {
-//       el = el.trim()
-//       if (all) {
-//           return [...document.querySelectorAll(el)]
-//       } else {
-//           return document.querySelector(el)
-//       }
-//   }
-
-//   const on = (type, el, listener, all = false) => {
-//       let selectEl = select(el, all)
-//       if (selectEl) {
-//           if (all) {
-//               selectEl.forEach(e => e.addEventListener(type, listener))
-//           } else {
-//               selectEl.addEventListener(type, listener)
-//           }
-//       }
-//   }
-
-//   const radioButtons = select('input[type="radio"]', true);
-  
-//   radioButtons.forEach(function(radioButton) {
-//       on('change', radioButton, function() {
-//           // Scroll to the questions below
-//           var parentStep = this.closest('.step');
-//           var nextQuestion = parentStep.nextElementSibling;
-//           if (nextQuestion) {
-//               nextQuestion.scrollIntoView({ behavior: 'smooth', block: 'start' });
-//           }
-//       });
-//   });
-// });
